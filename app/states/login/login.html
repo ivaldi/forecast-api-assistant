@@ -1,0 +1,11 @@
+<div class="container" ng-controller="LoginCtrl as loginCtrl">
+  <div class="jumbotron">
+    <div class="container">
+      <h1>Forecast Assistant</h1>
+      <p>Please login with your personal account</p>
+      <p><input ng-model="loginCtrl.session" placeholder="Your session id" /></p>
+      <p><input ng-model="loginCtrl.account" placeholder="Your account id" /></p>
+      <p><a class="btn btn-primary btn-lg" ng-click="loginCtrl.login()" role="button">Login &raquo;</a></p>
+    </div>
+  </div>
+</div>

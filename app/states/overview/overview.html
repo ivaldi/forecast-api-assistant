@@ -1,0 +1,105 @@
+<div class="container" ng-controller="OverviewCtrl as overviewCtrl">
+  <div class="jumbotron" style="margin-top: 20px;">
+    <div class="container">
+      <h1>Forecast Assistant</h1>
+      <div ng-show="overviewCtrl.people.length == 0 || overviewCtrl.projects.length == 0">
+        <h2>Just a moment please...</h2>
+      </div>
+
+
+      <div ng-show="overviewCtrl.people.length > 0 && overviewCtrl.projects.length > 0">
+
+        <div ng-show="overviewCtrl.ongoingRequests > 0">
+          <h2>We are fullfilling your request, just a moment please...</h2>
+          <p>Running requests: {{overviewCtrl.ongoingRequests}}</p>
+        </div>
+
+        <table class="table" ng-show="overviewCtrl.ongoingRequests == 0">
+          <tr>
+            <td>What do you want to do?</td>
+            <td>
+              <select ng-model="overviewCtrl.type">
+                <option ng-repeat="type in ['add','delete','migrate']" value="{{type}}">
+                  {{type}}
+                </option>
+              </select>
+            </td>
+          </tr>
+          <tr ng-show="overviewCtrl.type == 'add'">
+            <td>How many hours?</td>
+            <td>
+              <select ng-model="overviewCtrl.formData.allocation">
+                <option ng-repeat="hour in [1,2,3,4,5,6,7,8]" value="{{hour}}">
+                  {{hour}}
+                </option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>For who?</td>
+            <td>
+              <select ng-model="overviewCtrl.formData.person_id">
+                <option ng-selected="{{overviewCtrl.formData.person_id == person.id}}" ng-repeat="person in overviewCtrl.people" value="{{person.id}}">
+                  {{person.first_name}}
+                </option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>For which project?</td>
+            <td>
+              <select ng-model="overviewCtrl.formData.project_id">
+                <option ng-repeat="project in overviewCtrl.projects" value="{{project.id}}">
+                  {{project.name}}
+                </option>
+              </select>
+            </td>
+          </tr>
+          <tr ng-show="overviewCtrl.type == 'migrate'">
+            <td>To which project?</td>
+            <td>
+              <select ng-model="overviewCtrl.formData.new_project_id">
+                <option ng-repeat="project in overviewCtrl.projects" value="{{project.id}}">
+                  {{project.name}}
+                </option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>Start?</td>
+            <td>
+              <input ng-model="overviewCtrl.formData.start_date" placeholder="date (yyyy/mm/dd)"/>
+            </td>
+          </tr>
+          <tr>
+            <td>End?</td>
+            <td>
+              <input ng-model="overviewCtrl.formData.end_date" placeholder="date (yyyy/mm/dd)"/>
+            </td>
+          </tr>
+          <tr ng-show="overviewCtrl.type == 'add'">
+            <td>Which days?</td>
+            <td>
+              <label ng-repeat="day in overviewCtrl.days track by $index">
+                <input
+                  type="checkbox"
+                  name="days[]"
+                  value="{{day}}"
+                  ng-checked="overviewCtrl.formData.days.indexOf(day) > -1"
+                  ng-click="overviewCtrl.toggleDay($index+1)"
+                > {{day}}
+              </label>
+            </td>
+          </tr>
+          <tr ng-show="overviewCtrl.type == 'add'">
+            <td>Note?</td>
+            <td>
+              <input ng-model="overviewCtrl.formData.notes" placeholder="note"/>
+            </td>
+          </tr>
+        </table>
+        <p><a class="btn btn-primary btn-lg" ng-click="overviewCtrl.submit()" role="button">Let's go &raquo;</a></p>
+      </div>
+    </div>
+  </div>
+</div>
