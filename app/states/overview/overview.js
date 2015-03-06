@@ -16,6 +16,7 @@ var overviewController = function($http, apiService){
 
 	this.ongoingRequests = 0;
 
+	// Include/Exclude day for repeating assignments
 	this.toggleDay = function(day){
 		if(this.formData.days == undefined){
 			this.formData.days = [];
@@ -28,6 +29,7 @@ var overviewController = function($http, apiService){
 		}
 	}
 
+	// Load your own profile
 	this.init = function(){
 		apiService.whoami().then(function(result){
 			self.whoami = result.data;
@@ -37,18 +39,21 @@ var overviewController = function($http, apiService){
 		})
 	}
 
+	// Get list of people in Forecast account
 	this.getPeople = function(){
 		apiService.people().then(function(result){
 			self.people = result.data.people;
 		});
 	}
 
+	// Get list of projects in Forecast account
 	this.getProjects = function(){
 		apiService.projects().then(function(result){
 			self.projects = result.data.projects;
 		});
 	}
 
+	// Form is submitted
 	this.submit = function(){
 		switch(self.type){
 			case 'add':
@@ -64,13 +69,15 @@ var overviewController = function($http, apiService){
 		}
 	}
 
+	// Add assignments between to dates and on specified days
 	this.addAssignments = function(){
 		var from = new Date(this.formData.start_date);
 		var till = new Date(this.formData.end_date);
 
-		while(from <= till){
-			if(this.formData.days.indexOf(from.getDay()) > -1){
-				console.log('need to add on day:', from);
+		while(from <= till){ // Loop through all days
+			if(this.formData.days.indexOf(from.getDay()) > -1){ // Check if day is checken by the user
+
+				// Create assignments object
 				var assignment = {
 					project_id: this.formData.project_id,
 					person_id: this.formData.person_id,
@@ -85,6 +92,7 @@ var overviewController = function($http, apiService){
 		}
 	}
 
+	// Remove (and create) assignments
 	this.removeOrMirgrateAssignments = function(migrate){
 		apiService.assignments(this.formData.start_date, this.formData.end_date).success(function(data){
 			for(var i in data.assignments){
@@ -92,36 +100,38 @@ var overviewController = function($http, apiService){
 				if(assignment.person_id == self.formData.person_id &&
 					assignment.project_id == self.formData.project_id
 					){
+					// Delete assignments
 					self.deleteAssignment(assignment);
 
-					assignment.id = undefined;
-					assignment.updated_at = undefined;
-					assignment.updated_by_id = undefined;
-					assignment.project_id = self.formData.new_project_id;
-					self.addAssignment(assignment);
+					// If we are migrating: add a new assignment
+					if(migrate){
+						assignment.id = undefined;
+						assignment.updated_at = undefined;
+						assignment.updated_by_id = undefined;
+						assignment.project_id = self.formData.new_project_id;
+						self.addAssignment(assignment);
+					}
 				}
 			}
 		});
 	}
 
+	// Add single assigments
 	this.addAssignment = function(assignment){
 		this.ongoingRequests++;
 		apiService.createAssignment(assignment).success(function(result){
-			console.log(result);
 			self.ongoingRequests--;
 		}).error(function(data){
-			console.log(data);
 			self.ongoingRequests--;
 		});
 	}
 
+	// Remove single assignment
 	this.deleteAssignment = function(assignment){
 		this.ongoingRequests++;
 		apiService.deleteAssignment(assignment).success(function(result){
-			console.log(result);
 			self.ongoingRequests--;
 		}).error(function(data){
-			console.log(data);
 			self.ongoingRequests--;
 		});
 	}

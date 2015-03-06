@@ -7,54 +7,38 @@ module.factory('apiService', function($http) {
   apiService.url = 'https://api.forecastapp.com';
 
   apiService.whoami = function(){
-    return getApi('/whoami');
+    return callApi('/whoami','get');
   }
 
   apiService.people = function(){
-    return getApi('/people');
+    return callApi('/people', 'get');
   }
 
   apiService.projects = function(id){
-    return getApi('/projects/');
+    return callApi('/projects/','get');
   }
 
   apiService.assignments = function(start, end){
-    return getApi('/assignments?start_date='+start+'&end_date='+end);
+    return callApi('/assignments?start_date='+start+'&end_date='+end,'get');
   }
 
   apiService.createAssignment = function(assignment){
-    return postApi('/assignments', assignment);
+    return callApi('/assignments','post', assignment);
   }
 
   apiService.deleteAssignment = function(assignment){
-    return deleteApi('/assignments/'+assignment.id);
+    return callApi('/assignments/'+assignment.id, 'delete');
   }
 
-
-  getApi = function(url){
+  callApi = function(url, method, data){
     var req = {
-      method: 'GET',
+      method: method,
       url: apiService.url + url,
       headers: getHeaders(),
     }
-    return $http(req);
-  }
 
-  postApi = function(url, data){
-    var req = {
-      method: 'POST',
-      url: apiService.url + url,
-      headers: getHeaders(),
-      data: {assignment: data}
-    }
-    return $http(req);
-  }
-
-  deleteApi = function(url){
-    var req = {
-      method: 'DELETE',
-      url: apiService.url + url,
-      headers: getHeaders(),
+    if(data != undefined){
+      req.data = {assignment: data};
     }
     return $http(req);
   }
