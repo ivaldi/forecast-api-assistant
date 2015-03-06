@@ -1,4 +1,4 @@
-# Ivaldi Forecast Assistent
+# Ivaldi Forecast API Assistant
 
 This simple tool allows you to batch create/delete/migrate assignments in Forecast (Harvest).
 
